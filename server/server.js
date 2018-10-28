@@ -16,18 +16,33 @@ app.use(express.static(publicPath));
 io.on('connection', (serverSocket) => {
     console.log('New User Connected !');
 
-    /* serverSocket.emit('newMessage', {
-        from: "Server bot",
-        text: "Hello from Server",
-        createdAt: new Date().getTime()
-    }); */
+    // Listen for connection notice from client
+    serverSocket.on('joinChatRoom', (newUser) => {
+        // Broadcast
+        // Socket Broadcast emits to everyone except the one who sent the message
+        serverSocket.broadcast.emit('newBroadcast', {
+            text: `New user ${newUser.name} has joined the chat room`,
+            createdAt: new Date().getTime()
+        });
+    })
+
+
 
     serverSocket.on('createMessage', (newMessage) => {
         console.log('Create new message', newMessage);
 
-        io.emit('broadcastMessage', {
+        // Announcement
+        // IO Emit sends message to everyone including the one who send message
+        // IO EMIT = Announcement
+        io.emit('newAnnouncement', {
             from: newMessage.from,
             text: newMessage.text,
+            createdAt: new Date().getTime()
+        });
+
+        // Emit message from Admin to new user who has joined the chat room
+        serverSocket.emit('newServerMessage', {
+            text: `Welcome to the chat room ${newMessage.from}!!`,
             createdAt: new Date().getTime()
         })
     });

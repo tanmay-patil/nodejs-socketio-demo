@@ -5,10 +5,10 @@ clientSocket.on('connect', function () {
     console.log('Connected to Server!');
 
     // Emit email event;
-    /* clientSocket.emit('createMessage', {
-        from: "Client bot",
-        text: "Hello from Client !"
-    }) */
+    clientSocket.emit('joinChatRoom', {
+        name: "Tanmay",
+        text: "Hello from Tanmay!"
+    })
 });
 
 
@@ -17,8 +17,17 @@ clientSocket.on('disconnect', function () {
 })
 
 
-clientSocket.on('broadcastMessage', function (newMessage) {
+clientSocket.on('newAnnouncement', function (newMessage) {
+    console.log(`New Announcement, ${newMessage.from} has texted !`);
+    console.log(newMessage);
+});
+
+clientSocket.on('newBroadcast', function (newMessage) {
     console.log('New Broadcast Message !');
+    console.log(newMessage.text)
+});
+clientSocket.on('newServerMessage', function (newMessage) {
+    console.log('New Message from Server Admin!');
     console.log(newMessage)
 });
 // });
