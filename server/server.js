@@ -27,12 +27,14 @@ io.on('connection', (serverSocket) => {
         // Broadcast
         // Socket Broadcast emits to everyone except the one who sent the message
         serverSocket.broadcast.emit('newBroadcast', generateServerMessage(`New user ${newUser.name} has joined the chat room`));
+
+        io.emit('newAnnouncement', generateClientMessage('Admin', `New user ${newUser.name} has joined the chat room`));
     })
 
 
 
-    serverSocket.on('createMessage', (newMessage) => {
-        console.log('Create new message', newMessage);
+    serverSocket.on('newClientMessage', (newMessage) => {
+        console.log('Create new client message', newMessage);
 
         // Announcement
         // IO Emit sends message to everyone including the one who send message
