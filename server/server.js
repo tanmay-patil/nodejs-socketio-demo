@@ -13,10 +13,26 @@ const io = socketIO(server);
 app.use(express.static(publicPath));
 
 // Register event listener
-io.on('connection', (clientSocket) => {
+io.on('connection', (serverSocket) => {
     console.log('New User Connected !');
 
-    clientSocket.on('disconnect', () => {
+    /* serverSocket.emit('newMessage', {
+        from: "Server bot",
+        text: "Hello from Server",
+        createdAt: new Date().getTime()
+    }); */
+
+    serverSocket.on('createMessage', (newMessage) => {
+        console.log('Create new message', newMessage);
+
+        io.emit('broadcastMessage', {
+            from: newMessage.from,
+            text: newMessage.text,
+            createdAt: new Date().getTime()
+        })
+    });
+
+    serverSocket.on('disconnect', () => {
         console.log('User was disconnected')
     });
 });

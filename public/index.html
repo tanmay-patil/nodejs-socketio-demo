@@ -13,19 +13,7 @@
 
     <script src="lib/jquery.js"></script>
     <script src="socket.io/socket.io.js"></script>
-    <script>
-        $(window).on('load', () => {
-            const clientSocket = io();
-            clientSocket.on('connect', () => {
-                console.log('Connected to Server!')
-            });
-
-
-            clientSocket.on('disconnect', () => {
-                console.log('Disconnected from the server!')
-            })
-        });
-    </script>
+    <script src="js/main.js"></script>
 </body>
 
 </html>
