@@ -9,6 +9,12 @@ const port = process.env.PORT || 3000;
 const server = http.createServer(app);
 const io = socketIO(server);
 
+// Use utils
+const {
+    generateClientMessage,
+    generateServerMessage
+} = require('./utils/message.js');
+
 // middleware to set public path
 app.use(express.static(publicPath));
 
@@ -20,10 +26,7 @@ io.on('connection', (serverSocket) => {
     serverSocket.on('joinChatRoom', (newUser) => {
         // Broadcast
         // Socket Broadcast emits to everyone except the one who sent the message
-        serverSocket.broadcast.emit('newBroadcast', {
-            text: `New user ${newUser.name} has joined the chat room`,
-            createdAt: new Date().getTime()
-        });
+        serverSocket.broadcast.emit('newBroadcast', generateServerMessage(`New user ${newUser.name} has joined the chat room`));
     })
 
 
@@ -34,17 +37,10 @@ io.on('connection', (serverSocket) => {
         // Announcement
         // IO Emit sends message to everyone including the one who send message
         // IO EMIT = Announcement
-        io.emit('newAnnouncement', {
-            from: newMessage.from,
-            text: newMessage.text,
-            createdAt: new Date().getTime()
-        });
+        io.emit('newAnnouncement', generateClientMessage(newMessage.from, newMessage.text));
 
         // Emit message from Admin to new user who has joined the chat room
-        serverSocket.emit('newServerMessage', {
-            text: `Welcome to the chat room ${newMessage.from}!!`,
-            createdAt: new Date().getTime()
-        })
+        serverSocket.emit('newServerMessage', generateServerMessage(`Welcome to the chat room ${newMessage.from}!!`))
     });
 
     serverSocket.on('disconnect', () => {
